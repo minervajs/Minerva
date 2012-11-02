@@ -1,11 +1,34 @@
 'use strict';
 /*jshint globalstrict:true node:true*/
 
-var app, corser, express, port;
+var app, corser, db, express, port, redis;
 
 express = require("express");
 corser = require("corser");
+redis = require("redis");
 
+// Set up the DB Connection
+if (process.env.REDISTOGO_URL) {
+    var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+    db = require("redis").createClient(rtg.port, rtg.hostname);
+    db.auth(rtg.auth.split(":")[1]);
+} else {
+    db = redis.createClient();
+}
+
+
+// Test DB Connection
+var pkg = {
+    "name" : "usm",
+    "version" : "1.0.0",
+    "url" : "https://raw.github.com/usm/usm.github.com/master/usm.js"
+};
+db.hmset(pkg.name, pkg, redis.print);
+db.hgetall(pkg.name, function (err, replies) {
+    console.log("Connected to DB: ", JSON.stringify(replies));
+});
+
+// Set up the App
 app = express();
 
 app.use(corser.create());
