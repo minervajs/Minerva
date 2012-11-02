@@ -8,5 +8,8 @@
         "corser" : "1.1.x"
     },
     "readme" : "readme.md",
-    "license" : "MIT"
+    "license" : "MIT",
+    "engines" : {
+        "node" : ">=0.8"
+    }
 }
