@@ -1,0 +1,12 @@
+{
+    "name" : "jsstatlibm",
+    "description" : "Backend service for managing JavaScript statistics libraries.",
+    "version" : "0.0.1",
+    "private" : true,
+    "dependencies" : {
+        "express" : "3.x",
+        "corser" : "1.1.x"
+    },
+    "readme" : "readme.md",
+    "license" : "MIT"
+}
