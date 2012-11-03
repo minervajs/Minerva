@@ -42,6 +42,11 @@ app.options("*", function (req, res){
 app.get("/*", function (req, res) {
     res.writeHead(200);
     res.end("jsstatlibm");
+
+app.get(/^\/site\/(.*)$/, function (req, res) {
+    var path = req.params[0];
+    res.sendfile('./static/'+path);
+});
 });
 
 port = process.env.PORT || 5000;
