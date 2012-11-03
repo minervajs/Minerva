@@ -7,9 +7,9 @@ express = require("express");
 corser = require("corser");
 redis = require("redis");
 
-// Set up the DB Connection
+//Set up the DB Connection
 if (process.env.REDISTOGO_URL) {
-    var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+    var rtg = require("url").parse(process.env.REDISTOGO_URL);
     db = require("redis").createClient(rtg.port, rtg.hostname);
     db.auth(rtg.auth.split(":")[1]);
 } else {
@@ -28,7 +28,7 @@ db.hgetall(pkg.name, function (err, replies) {
     console.log("Connected to DB: ", JSON.stringify(replies));
 });
 
-// Set up the App
+//Set up the App
 app = express();
 
 app.use(corser.create());
