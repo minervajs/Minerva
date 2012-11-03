@@ -33,8 +33,8 @@ app = express();
 
 app.use(corser.create());
 
-// Corser does not end CORS preflight requests itself.
 app.options("*", function (req, res){
+  //Corser does not end CORS preflight requests itself.
     res.writeHead(204);
     res.end();
 });
