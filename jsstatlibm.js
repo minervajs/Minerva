@@ -39,9 +39,9 @@ app.options("*", function (req, res){
     res.end();
 });
 
-app.get("/*", function (req, res) {
-    res.writeHead(200);
-    res.end("jsstatlibm");
+app.get("/", function (req, res, next) {
+    res.redirect("/site/index.html");
+});
 
 app.get(/^\/site\/(.*)$/, function (req, res) {
     var path = req.params[0];
