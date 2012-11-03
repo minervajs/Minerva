@@ -1,10 +1,11 @@
 'use strict';
 /*jshint globalstrict:true node:true*/
 
-var app, corser, db, express, port, redis;
+var app, corser, db, everyauth, express, port, redis;
 
-express = require("express");
 corser = require("corser");
+everyauth = require("everyauth");
+express = require("express");
 redis = require("redis");
 
 //Set up the DB Connection
@@ -16,22 +17,59 @@ if (process.env.REDISTOGO_URL) {
     db = redis.createClient();
 }
 
+//Set up EveryAuth for Google's OAuth 2
+everyauth.google
+    .appId(process.env.CLIENT_ID)
+    .appSecret(process.env.CLIENT_SECRET)
+    .scope('https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email')
+    .findOrCreateUser( function (session, accessToken, accessTokenExtra, googleUserMetadata) {
+        var promise, user;
+        promise = this.Promise();
+        user = {
+            "id" : googleUserMetadata.id,
+            "name" : googleUserMetadata.name,
+            "accessToken" : accessToken,
+            "refreshToken" : accessTokenExtra.refresh_token,
+            "expiresIn" : accessTokenExtra.expires_in,
+            "email" : googleUserMetadata.email
+        };
+        db.sismember("users", user.id, function (err, response) {
+            if (err) return promise.fail(err);
+            if (response === 0) {
+                // Create and save the user
+                db.multi()
+                    .sadd('users', user.id) //Add the user to the set of users
+                    .hmset('user:'+user.id, user) //Add the user's hash
+                    .hgetall('user:'+user.id) //Retrieve the now canonical user's hash
+                    .exec(function (err, replies){
+                        if (err) return promise.fail(err);
+                        promise.fulfill(replies[replies.length-1]);
+                    });
+            } else {
+                db.hgetall('user:'+user.id, function (err, reply){
+                    if (err) return promise.fail(err);
+                    promise.fulfill(reply);
+                });
+            }
 
-// Test DB Connection
-var pkg = {
-    "name" : "usm",
-    "version" : "1.0.0",
-    "url" : "https://raw.github.com/usm/usm.github.com/master/usm.js"
-};
-db.hmset(pkg.name, pkg, redis.print);
-db.hgetall(pkg.name, function (err, replies) {
-    console.log("Connected to DB: ", JSON.stringify(replies));
+        });
+        promise.fulfill(user);
+        return promise;
+    })
+    .redirectPath('/restricted');
+
+everyauth.everymodule.findUserById( function (userId, callback) {
+    db.hgetall('user:'+userId, callback);
 });
 
 //Set up the App
 app = express();
 
 app.use(corser.create());
+app.use(express.bodyParser());
+app.use(express.cookieParser(process.env.COOKIE_SECRET));
+app.use(express.session());
+app.use(everyauth.middleware());
 
 app.options("*", function (req, res){
   //Corser does not end CORS preflight requests itself.
@@ -47,6 +85,22 @@ app.get(/^\/site\/(.*)$/, function (req, res) {
     var path = req.params[0];
     res.sendfile('./static/'+path);
 });
+
+app.get('/account', function (req, res) {
+    if (req.user) {
+        res.jsonp(req.user);
+    } else {
+        res.jsonp(null);
+    }
+});
+
+app.get("/restricted", function (req, res) {
+    if (!req.user) {
+        res.set("Content-type", "text/html");
+        res.end("Please login <a href='/auth/google'>here</a>");
+    } else {
+        res.end("Welcome to your jsstatlibm account, "+req.user.name);
+    }
 });
 
 port = process.env.PORT || 5000;
