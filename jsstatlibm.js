@@ -23,7 +23,7 @@ everyauth.google
     .appSecret(process.env.CLIENT_SECRET)
     .scope('https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email')
     .findOrCreateUser( function (session, accessToken, accessTokenExtra, googleUserMetadata) {
-        var promise, user;
+        var promise, user, userKey;
         promise = this.Promise();
         user = {
             "id" : googleUserMetadata.id,
@@ -33,20 +33,21 @@ everyauth.google
             "expiresIn" : accessTokenExtra.expires_in,
             "email" : googleUserMetadata.email
         };
-        db.sismember("users", user.id, function (err, response) {
+        userKey = "user:"+user.id;
+        db.exists(userKey, function (err, response) {
             if (err) return promise.fail(err);
             if (response === 0) {
                 // Create and save the user
                 db.multi()
-                    .sadd('users', user.id) //Add the user to the set of users
-                    .hmset('user:'+user.id, user) //Add the user's hash
-                    .hgetall('user:'+user.id) //Retrieve the now canonical user's hash
+                    //.sadd('users', user.id) //Add the user to the set of users
+                    .hmset(userKey, user) //Add the user's hash
+                    .hgetall(userKey) //Retrieve the now canonical user's hash
                     .exec(function (err, replies){
                         if (err) return promise.fail(err);
                         promise.fulfill(replies[replies.length-1]);
                     });
             } else {
-                db.hgetall('user:'+user.id, function (err, reply){
+                db.hgetall(userKey, function (err, reply){
                     if (err) return promise.fail(err);
                     promise.fulfill(reply);
                 });
