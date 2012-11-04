@@ -103,13 +103,6 @@ app.get('/account', function (req, res) {
     }
 });
 
-app.get("/restricted", function (req, res) {
-    if (!req.user) {
-        res.set("Content-type", "text/html");
-        res.end("Please login <a href='/auth/google'>here</a>");
-    } else {
-        res.end("Welcome to your jsstatlibm account, "+req.user.name);
-    }
 });
 
 port = process.env.PORT || 5000;
