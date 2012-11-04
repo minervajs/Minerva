@@ -22,7 +22,7 @@
     });
 
     jsll.factory('Library', function ($resource){
-        var Library = $resource('../library/:name', {"name" : "@name"});
+        var Library = $resource('../l/:name', {"name" : "@name"});
         return Library;
     });
 

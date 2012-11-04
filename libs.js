@@ -1,27 +1,15 @@
 'use strict';
 /*jshint globalstrict:true node:true*/
 
-var Libs = {};
+var Libs = {}, db;
 
-Libs.data = {
-    "usm" : {
-        "name" : "usm",
-        "description" : "Universal Sequence Maps",
-        "url" : "https://raw.github.com/usm/usm.github.com/master/usm.js",
-        "maintainer" : {
-            "email" : "jalmeida@mathbiol.org",
-            "userId" : "1234567890"
-        }
-    },
-    "spearson" : {
-        "name" : "spearson",
-        "description" : "Poor Mans Javascript Stats Library",
-        "url" : "https://raw.github.com/agrueneberg/Spearson/master/lib/spearson.js",
-        "maintainer" : {
-            "email" : "agrueneberg@googlemail.com",
-            "userId" : "0987654321"
-        }
-    }
+Libs.use = function (database) {
+    db = database;
+    return Libs;
+};
+
+Libs.nameToKey = function (name) {
+    return "library:"+name;
 };
 
 Libs.get = function () {
@@ -29,28 +17,46 @@ Libs.get = function () {
     if (arguments.length === 2) {
         name = arguments[0];
         callback = arguments[1];
-        return callback(null, Libs.data[name]);
+        db.get(Libs.nameToKey(name), function (err, lib){
+            if (err) return callback(err);
+            callback(null, lib);
+        });
     } else {
         callback = arguments[0];
-        callback(null, Libs.data);
+        db.list({
+            "startkey" : Libs.nameToKey(""),
+            "endkey" : Libs.nameToKey("\u9999"),
+            "limit" : 100,
+            "include_docs" : true
+        }, function (err, body) {
+            if (err) return callback(err);
+            var libs = body.rows.map(function (row) { return row.doc; });
+            callback(null, libs);
+        });
     }
 };
 
 Libs.set = function (lib, user, callback) {
     Libs.get(lib.name, function (err, currentLib) {
-        if (!currentLib) {
+        if (err && err.reason === "missing") {
             lib.maintainer = {
                 userId : user.id,
                 email : user.email
             };
-            Libs.data[lib.name] = lib;
-            callback(null, lib);
+            db.insert(lib, Libs.nameToKey(lib.name), function (err, lib){
+                if (err) return callback(err);
+                callback(null, lib);
+            });
+        } else if (err) {
+            return callback(err);
         } else if (currentLib.maintainer.userId !== user.id) {
-            callback("Error: you may only modify your own libaries.");
+            callback({ error : "unauthorized", reason : "You are not authorized to modify that library." });
         } else {
-            lib.maintainer.userId = user.id;
-            Libs.data[lib.name] = lib;
-            callback(null, lib);
+            lib.maintainer = currentLib.maintainer;
+            db.insert(lib, Libs.nameToKey(lib.name), function (err, lib){
+                if (err) return callback(err);
+                callback(null, lib);
+            });
         }
     });
 };

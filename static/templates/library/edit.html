@@ -1,4 +1,6 @@
 <form name="libraryForm">
+  <input type="hidden" name="_rev" ng-model="library._rev" />
+  
   <div class="control-group" ng-class="{error: libraryForm.name.$invalid}">
     <label>Name</label>
     <input type="text" name="name" ng-model="library.name" required>

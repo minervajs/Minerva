@@ -110,21 +110,33 @@ app.get('/account', function (req, res) {
     }
 });
 
-app.get('/library', function (req, res) {
+app.get('/l', function (req, res) {
+    //Get list of all libraries
     Libs.get(function (err, libs) {
+        if (err) return res.jsonp(500, err);
         res.jsonp(libs);
     });
 });
 
-app.get('/library/:name', function (req, res) {
+app.get('/l/:name', function (req, res) {
+    //Get a particular library by name
     Libs.get(req.params.name, function (err, lib) {
+        if (err) return res.jsonp(500, err);
         res.jsonp(lib);
     });
 });
 
-app.post('/library/:name', function (req, res) {
+app.post('/l/:name', function (req, res) {
+    //Post (save) a particular library
+    if (!req.user) {
+        res.jsonp(403, { error : "unauthorized", reason : "You must be logged in to save libraries."});
+    }
     Libs.set(req.body, req.user, function (err, lib){
-        if (err) return res.jsonp(err);
+        if (err && err.error === "library_ownership") {
+            return res.jsonp(403, err);
+        } else if (err) {
+            return res.jsonp(500, err);
+        }
         res.jsonp(lib);
     });
 });
