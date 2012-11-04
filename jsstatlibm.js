@@ -106,6 +106,11 @@ app.get(/^\/site\/(.*)$/, function (req, res) {
     res.sendfile('./static/'+path);
 });
 
+app.get('/api', function (req, res) {
+    //Send the api for use in the javascript console
+    res.sendfile('./static/js/jssll.js');
+});
+
 app.get('/account', function (req, res) {
     //Get user information for current user
     if (req.user) {
