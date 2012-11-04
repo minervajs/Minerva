@@ -19,12 +19,13 @@ nano.db.get('jsstatll', function (err, body) {
                 console.log("Unable to connect to db. Exiting.");
                 process.exit(1);
             }
-            console.log("db created");
+            console.log("db created and opened");
             db = nano.db.use('jsstatll');
             Users.use(db);
             Libs.use(db);
         });
     } else {
+        console.log("db opened");
         db = nano.db.use('jsstatll');
         Users.use(db);
         Libs.use(db);
@@ -78,7 +79,9 @@ everyauth.everymodule.findUserById( function (userId, callback) {
     });
 });
 
+//---------------------------------------------------------
 //Set up the App
+//---------------------------------------------------------
 app = express();
 
 app.use(corser.create());
@@ -98,11 +101,13 @@ app.get("/", function (req, res, next) {
 });
 
 app.get(/^\/site\/(.*)$/, function (req, res) {
+    //Get static files for the web interface
     var path = req.params[0];
     res.sendfile('./static/'+path);
 });
 
 app.get('/account', function (req, res) {
+    //Get user information for current user
     if (req.user) {
         res.jsonp(req.user.sanitized);
     } else {
