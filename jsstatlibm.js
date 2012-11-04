@@ -1,22 +1,35 @@
 'use strict';
 /*jshint globalstrict:true node:true*/
 
-var app, corser, db, everyauth, express, port, redis, Libs;
+var app, corser, db, everyauth, express, nano, port, Libs, Users;
 
 corser = require("corser");
 everyauth = require("everyauth");
 express = require("express");
-redis = require("redis");
 Libs = require("./libs");
+Users = require("./users");
+nano = require("nano")(process.env.CLOUDANT_URL);
 
-//Set up the DB Connection
-if (process.env.REDISTOGO_URL) {
-    var rtg = require("url").parse(process.env.REDISTOGO_URL);
-    db = require("redis").createClient(rtg.port, rtg.hostname);
-    db.auth(rtg.auth.split(":")[1]);
-} else {
-    db = redis.createClient();
-}
+// Set up DB connection
+nano.db.get('jsstatll', function (err, body) {
+    if (err && err.error === 'not_found') {
+        console.log("db not found...creating");
+        nano.db.create('jsstatll', function (err) {
+            if (err) {
+                console.log("Unable to connect to db. Exiting.");
+                process.exit(1);
+            }
+            console.log("db created");
+            db = nano.db.use('jsstatll');
+            Users.use(db);
+            Libs.use(db);
+        });
+    } else {
+        db = nano.db.use('jsstatll');
+        Users.use(db);
+        Libs.use(db);
+    }
+});
 
 //Set up EveryAuth for Google's OAuth 2
 everyauth.google
