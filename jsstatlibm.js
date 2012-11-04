@@ -57,10 +57,18 @@ everyauth.google
         promise.fulfill(user);
         return promise;
     })
-    .redirectPath('/restricted');
+    .redirectPath('/');
 
 everyauth.everymodule.findUserById( function (userId, callback) {
-    db.hgetall('user:'+userId, callback);
+    db.hgetall('user:'+userId, function (err, user) {
+        if (err) return callback(err);
+        var safeKeys = ['id', 'name', 'email'];
+        user.sanitized = {};
+        safeKeys.forEach(function (key) {
+            user.sanitized[key] = user[key];
+        });
+        callback(null, user);
+    });
 });
 
 //Set up the App
@@ -89,9 +97,9 @@ app.get(/^\/site\/(.*)$/, function (req, res) {
 
 app.get('/account', function (req, res) {
     if (req.user) {
-        res.jsonp(req.user);
+        res.jsonp(req.user.sanitized);
     } else {
-        res.jsonp(null);
+        res.jsonp({});
     }
 });
 
