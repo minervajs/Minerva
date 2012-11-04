@@ -12,6 +12,7 @@
         $routeProvider.
                 when('/', {controller:'LibraryList', templateUrl:'templates/library/list.html'}).
                 when('/edit/:name', {controller:'LibraryEdit', templateUrl:'templates/library/edit.html'}).
+                when('/view/:name', {controller:'LibraryView', templateUrl:'templates/library/view.html'}).
                 when('/new', {controller:'LibraryCreate', templateUrl:'templates/library/edit.html'}).
                 otherwise({redirectTo:'/'});
     });
@@ -70,6 +71,14 @@
               $location.path('/');
             });
         };
+    });
+
+    jsll.controller('LibraryView', function ($scope, $routeParams, Library) {
+        var self = this;
+        Library.get({name: $routeParams.name}, function(library) {
+            self.original = library;
+            $scope.library = new Library(self.original);
+        });
     });
 
     jsll.controller('LibraryCreate', function ($scope, $location, Library) {
