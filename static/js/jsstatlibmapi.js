@@ -75,7 +75,7 @@
     jsll.controller('LibraryCreate', function ($scope, $location, Library) {
         $scope.save = function() {
             Library.save($scope.library, function(library) {
-              $location.path('/edit/' + library.name);
+              $location.path('/' + library.name);
             });
         };
     });
