@@ -1,12 +1,13 @@
 'use strict';
 /*jshint globalstrict:true node:true*/
 
-var app, corser, db, everyauth, express, port, redis;
+var app, corser, db, everyauth, express, port, redis, Libs;
 
 corser = require("corser");
 everyauth = require("everyauth");
 express = require("express");
 redis = require("redis");
+Libs = require("./libs");
 
 //Set up the DB Connection
 if (process.env.REDISTOGO_URL) {
@@ -103,6 +104,23 @@ app.get('/account', function (req, res) {
     }
 });
 
+app.get('/library', function (req, res) {
+    Libs.get(function (err, libs) {
+        res.jsonp(libs);
+    });
+});
+
+app.get('/library/:name', function (req, res) {
+    Libs.get(req.params.name, function (err, lib) {
+        res.jsonp(lib);
+    });
+});
+
+app.post('/library/:name', function (req, res) {
+    Libs.set(req.body, req.user, function (err, lib){
+        if (err) return res.jsonp(err);
+        res.jsonp(lib);
+    });
 });
 
 port = process.env.PORT || 5000;
