@@ -37,44 +37,37 @@ everyauth.google
     .appSecret(process.env.CLIENT_SECRET)
     .scope('https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email')
     .findOrCreateUser( function (session, accessToken, accessTokenExtra, googleUserMetadata) {
-        var promise, user, userKey;
+        var userId, promise, userKey;
         promise = this.Promise();
-        user = {
-            "id" : googleUserMetadata.id,
-            "name" : googleUserMetadata.name,
-            "accessToken" : accessToken,
-            "refreshToken" : accessTokenExtra.refresh_token,
-            "expiresIn" : accessTokenExtra.expires_in,
-            "email" : googleUserMetadata.email
-        };
-        userKey = "user:"+user.id;
-        db.exists(userKey, function (err, response) {
-            if (err) return promise.fail(err);
-            if (response === 0) {
-                // Create and save the user
-                db.multi()
-                    //.sadd('users', user.id) //Add the user to the set of users
-                    .hmset(userKey, user) //Add the user's hash
-                    .hgetall(userKey) //Retrieve the now canonical user's hash
-                    .exec(function (err, replies){
-                        if (err) return promise.fail(err);
-                        promise.fulfill(replies[replies.length-1]);
-                    });
-            } else {
-                db.hgetall(userKey, function (err, reply){
-                    if (err) return promise.fail(err);
-                    promise.fulfill(reply);
+        userId = googleUserMetadata.id;
+        Users.get(userId, function (err, user){
+            if (err && err.error === "User not found") {
+                // Create and return user
+                user = {
+                    "id" : userId,
+                    "name" : googleUserMetadata.name,
+                    "accessToken" : accessToken,
+                    "refreshToken" : accessTokenExtra.refresh_token,
+                    "expiresIn" : accessTokenExtra.expires_in,
+                    "email" : googleUserMetadata.email
+                };
+                Users.set(user, function (err, user) {
+                    promise.fulfill(user);
                 });
+            } else if (err) {
+                // Pass unknown errors up the chain
+                promise.fail(err);
+            } else {
+                // Return the created user
+                promise.fulfill(user);
             }
-
         });
-        promise.fulfill(user);
         return promise;
     })
     .redirectPath('/');
 
 everyauth.everymodule.findUserById( function (userId, callback) {
-    db.hgetall('user:'+userId, function (err, user) {
+    Users.get(userId, function (err, user) {
         if (err) return callback(err);
         var safeKeys = ['id', 'name', 'email'];
         user.sanitized = {};
