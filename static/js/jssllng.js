@@ -3,12 +3,11 @@
     /*jshint browser:true*/
     /*global console:false angular:false*/
     
-    var jssll = {};
-    console.log("JS Stat Lib² Loaded");
+    var jssllng = {};
 
-    jssll = angular.module('jssll', ['ngResource']);
+    jssllng = angular.module('jssllng', ['ngResource']);
 
-    jssll.config(function ($routeProvider) {
+    jssllng.config(function ($routeProvider) {
         $routeProvider.
                 when('/', {controller:'LibraryList', templateUrl:'templates/library/list.html'}).
                 when('/edit/:name', {controller:'LibraryEdit', templateUrl:'templates/library/edit.html'}).
@@ -17,17 +16,17 @@
                 otherwise({redirectTo:'/'});
     });
 
-    jssll.factory('Account', function ($resource) {
+    jssllng.factory('Account', function ($resource) {
         var Account = $resource('../account');
         return Account;
     });
 
-    jssll.factory('Library', function ($resource){
+    jssllng.factory('Library', function ($resource){
         var Library = $resource('../l/:name', {"name" : "@name"});
         return Library;
     });
 
-    jssll.controller('account', function ($scope, $http, Account){
+    jssllng.controller('account', function ($scope, $http, Account){
         /*global Account:false*/
         $scope.accountTemplate = 'templates/account/loggedOut.html';
         var user = Account.get(function () {
@@ -43,12 +42,12 @@
         };
     });
 
-    jssll.controller('LibraryList', function ($scope, Library) {
+    jssllng.controller('LibraryList', function ($scope, Library) {
         $scope.libraries = Library.query();
         $scope.message = "Hello";
     });
 
-    jssll.controller('LibraryEdit', function ($scope, $location, $routeParams, Library) {
+    jssllng.controller('LibraryEdit', function ($scope, $location, $routeParams, Library) {
         var self = this;
  
         Library.get({name: $routeParams.name}, function(library) {
@@ -73,7 +72,7 @@
         };
     });
 
-    jssll.controller('LibraryView', function ($scope, $routeParams, Library) {
+    jssllng.controller('LibraryView', function ($scope, $routeParams, Library) {
         var self = this;
         Library.get({name: $routeParams.name}, function(library) {
             self.original = library;
@@ -81,7 +80,7 @@
         });
     });
 
-    jssll.controller('LibraryCreate', function ($scope, $location, Library) {
+    jssllng.controller('LibraryCreate', function ($scope, $location, Library) {
         $scope.save = function() {
             Library.save($scope.library, function(library) {
               $location.path('/' + library.name);
@@ -89,5 +88,6 @@
         };
     });
 
-    window.jssll = jssll;
+    console.log("jssllng loaded");
+    window.jssllng = jssllng;
 })();
