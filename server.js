@@ -11,22 +11,22 @@ Users = require("./users");
 nano = require("nano")(process.env.CLOUDANT_URL);
 
 // Set up DB connection
-nano.db.get('jsstatll', function (err, body) {
+nano.db.get('jssll', function (err, body) {
     if (err && err.error === 'not_found') {
         console.log("db not found...creating");
-        nano.db.create('jsstatll', function (err) {
+        nano.db.create('jssll', function (err) {
             if (err) {
                 console.log("Unable to connect to db. Exiting.");
                 process.exit(1);
             }
             console.log("db created and opened");
-            db = nano.db.use('jsstatll');
+            db = nano.db.use('jssll');
             Users.use(db);
             Libs.use(db);
         });
     } else {
         console.log("db opened");
-        db = nano.db.use('jsstatll');
+        db = nano.db.use('jssll');
         Users.use(db);
         Libs.use(db);
     }

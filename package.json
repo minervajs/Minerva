@@ -1,6 +1,6 @@
 {
-    "name" : "jsstatlibm",
-    "description" : "Backend service for managing JavaScript statistics libraries.",
+    "name" : "jssll",
+    "description" : "JavaScript Stat Library Library Server",
     "version" : "0.0.1",
     "private" : true,
     "dependencies" : {

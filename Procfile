@@ -1,1 +1,1 @@
-web: node jsstatlibm.js
+web: node server.js
