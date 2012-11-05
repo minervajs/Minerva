@@ -1,0 +1,16 @@
+<h3>Rate {{ library.name }}</h3>
+<hr>
+<p class="lead">{{ library.description}}</p>
+<form name="ratingForm">
+
+	<div class="control-group" ng-class="{error: ratingForm.rating.$invalid}">
+		<label>Rating</label>
+		<input type="text" name="rating" ng-model="rating" required placeholder="0-5">
+		<span ng-show="ratingForm.rating.$error.required" class="help-inline">Required</span>
+	</div>
+
+	<a href="#!/" class="btn">Cancel</a>
+	<button ng-click="rate()" ng-disabled="libraryForm.$invalid"
+          class="btn btn-primary">Rate</button>
+</form>
+<p>Current Rating: <rating rating="{{library.ratings.average}}"></rating></p>

@@ -155,6 +155,13 @@ app.post('/l/:name', function (req, res) {
     });
 });
 
+app.post('/l/:name/rating/:rating', function (req, res) {
+    Libs.rate(req.params.name, req.params.rating, function (err, averageRating) {
+        if (err) return res.jsonp(500, err);
+        res.jsonp(averageRating);
+    });
+});
+
 port = process.env.PORT || 5000;
 app.listen(port, function () {
     console.log("Listening on port", port);

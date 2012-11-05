@@ -52,6 +52,7 @@ Libs.set = function (lib, user, callback) {
         } else if (currentLib.maintainer.userId !== user.id) {
             callback({ error : "unauthorized", reason : "You are not authorized to modify that library." });
         } else {
+            // TODO current with retrieved lib. Don't allow rating hacks :)
             lib.maintainer = currentLib.maintainer;
             db.insert(lib, Libs.nameToKey(lib.name), function (err, lib){
                 if (err) return callback(err);
@@ -59,6 +60,31 @@ Libs.set = function (lib, user, callback) {
             });
         }
     });
+};
+
+Libs.rate = function (name, ratingIn, callback) {
+    var rating = parseInt(ratingIn, 10);
+    if (rating > 5 || rating < 0) {
+        callback({
+            error : "invalid_rating",
+            reason : "ratings must be an integer from 0-5"
+        });
+    } else {
+        Libs.get(name, function (err, lib) {
+            if (err) return callback(err);
+            var average, count;
+            if (!lib.ratings) lib.ratings = {};
+            average = lib.ratings.average || 0;
+            count = lib.ratings.count || 0;
+            average = (average*count + rating) / (count + 1);
+            lib.ratings.average = average;
+            lib.ratings.count = count + 1;
+            db.insert(lib, Libs.nameToKey(lib.name), function (err, lib){
+                if (err) return callback(err);
+                callback(null, average);
+            });
+        });
+    }
 };
 
 module.exports = Libs;

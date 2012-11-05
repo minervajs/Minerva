@@ -1,19 +1,23 @@
-<input type="text" ng-model="search" class="pull-right search-query" placeholder="Search">
+<input type="text" ng-model="search" class="pull-right search-query" placeholder="search by name or keyword">
 <h4>Libraries</h4>
 <table class="table">
   <thead>
   <tr>
     <th>Name</th>
+    <th>Rating</th>
     <th>Description</th>
-    <th><a href="#/new"><i class="icon-plus-sign"></i></a></th>
+    <th><a href="#!/new"><i class="icon-plus-sign"></i></a></th>
   </tr>
   </thead>
   <tbody>
   <tr ng-repeat="library in libraries | filter:search | orderBy:'name'">
-    <td><a href="#/view/{{library.name}}" target="_blank">{{library.name}}</a></td>
+    <td><a href="#!/view/{{library.name}}">{{library.name}}</a></td>
+    <td>
+      <a href="#!/rate/{{library.name}}"><rating rating="{{library.ratings.average}}"></rating></a>
+    </td>
     <td>{{library.description}}</td>
     <td>
-      <a href="#/edit/{{library.name}}"><i class="icon-pencil"></i></a>
+      <a href="#!/edit/{{library.name}}"><i class="icon-pencil"></i></a>
     </td>
   </tr>
   </tbody>
