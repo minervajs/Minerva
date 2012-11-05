@@ -7,10 +7,12 @@ corser = require("corser");
 everyauth = require("everyauth");
 express = require("express");
 Libs = require("./libs");
-Users = require("./users");
 nano = require("nano")(process.env.CLOUDANT_URL);
+Users = require("./users");
 
+//---------------------------------------------------------
 // Set up DB connection
+//---------------------------------------------------------
 nano.db.get('jssll', function (err, body) {
     if (err && err.error === 'not_found') {
         console.log("db not found...creating");
@@ -32,7 +34,9 @@ nano.db.get('jssll', function (err, body) {
     }
 });
 
-//Set up EveryAuth for Google's OAuth 2
+//---------------------------------------------------------
+// Set up EveryAuth for Google's OAuth 2
+//---------------------------------------------------------
 everyauth.google
     .appId(process.env.CLIENT_ID)
     .appSecret(process.env.CLIENT_SECRET)
@@ -80,7 +84,7 @@ everyauth.everymodule.findUserById( function (userId, callback) {
 });
 
 //---------------------------------------------------------
-//Set up the App
+// Set up and start the server
 //---------------------------------------------------------
 app = express();
 
@@ -91,7 +95,7 @@ app.use(express.session());
 app.use(everyauth.middleware());
 
 app.options("*", function (req, res){
-  //Corser does not end CORS preflight requests itself.
+    //Corser does not end CORS preflight requests itself.
     res.writeHead(204);
     res.end();
 });
