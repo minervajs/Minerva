@@ -24,7 +24,7 @@
     });
 
     jssllng.factory('Library', function ($resource) {
-        var Library = $resource('../l/:name', {"name" : "@name"});
+        var Library = $resource('../lib/:name', {"name" : "@name"});
         Library.prototype.destroy = function(cb) {
             return Library.remove({name: this.name}, cb);
         };
@@ -34,7 +34,7 @@
     jssllng.factory('Rating', function ($resource) {
         var Rating = $resource('../l/:name/rating/:rating', {"name" : "@name", "rating" : "@rating"});
         return Rating;
-    })
+    });
 
     jssllng.controller('account', function ($scope, $http, Account){
         /*global Account:false*/
@@ -110,7 +110,7 @@
                 rating : $scope.rating
             }, function () {
                 $location.path('/');
-            });;
+            });
         };
     });
 
@@ -144,7 +144,7 @@
                                 this.page.identifier = disqus_identifier;
                                 this.page.url = disqus_url;
                             }
-                        })
+                        });
                     } else {
                         /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
                         $window.disqus_shortname = 'jsstatlibdev'; // required: replace example with your forum shortname
@@ -154,7 +154,7 @@
                         /* * * DON'T EDIT BELOW THIS LINE * * */
                         (function() {
                             var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-                            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                            dsq.src = 'http://' + $window.disqus_shortname + '.disqus.com/embed.js';
                             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
                         })();
                     }

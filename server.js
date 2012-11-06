@@ -132,7 +132,7 @@ app.get('/account', function (req, res) {
     }
 });
 
-app.get('/l', function (req, res) {
+app.get('/lib', function (req, res) {
     //Get list of all libraries
     Libs.get(function (err, libs) {
         if (err) return res.jsonp(500, err);
@@ -140,7 +140,7 @@ app.get('/l', function (req, res) {
     });
 });
 
-app.get('/l/:name', function (req, res) {
+app.get('/lib/:name', function (req, res) {
     //Get a particular library by name
     Libs.get(req.params.name, function (err, lib) {
         if (err) return res.jsonp(500, err);
@@ -148,7 +148,7 @@ app.get('/l/:name', function (req, res) {
     });
 });
 
-app.post('/l/:name', mustbeloggedin, function (req, res) {
+app.post('/lib/:name', mustbeloggedin, function (req, res) {
     //Post (save) a particular library
     var name = req.params.name;
     Libs.get(name, function (err, lib) {
@@ -178,7 +178,7 @@ app.post('/l/:name', mustbeloggedin, function (req, res) {
     });
 });
 
-app['delete']('/l/:name', mustbeloggedin, function (req, res) {
+app['delete']('/lib/:name', mustbeloggedin, function (req, res) {
     //Delete a particular library
     var name = req.params.name;
     Libs.get(name, function (err, lib) {
@@ -195,7 +195,7 @@ app['delete']('/l/:name', mustbeloggedin, function (req, res) {
     });
 });
 
-app.post('/l/:name/rating/:rating', function (req, res) {
+app.post('/lib/:name/rating/:rating', function (req, res) {
     Libs.rate(req.params.name, req.params.rating, function (err, averageRating) {
         if (err) return res.jsonp(500, err);
         res.jsonp(averageRating);
