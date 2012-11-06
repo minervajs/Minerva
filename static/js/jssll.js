@@ -7,6 +7,8 @@
 
     var jssll = {}, _oldjssll, rootURL;
 
+    rootURL = 'http://jssll.heroku.com';
+
     jssll.print = function (err, resp) {
         if (err) {
             console.error(err);
