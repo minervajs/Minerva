@@ -87,4 +87,18 @@ Libs.rate = function (name, ratingIn, callback) {
     }
 };
 
+Libs.find = function (keyword, callback) {
+    db.view('jssll', 'find', {
+        startkey : keyword,
+        endkey : keyword+"\uFFFF"
+        //include_docs : true
+    }, function (err, body) {
+        if (err) return callback (err);
+        var libs = body.rows.map(function (row) {
+            return row.value;
+        });
+        callback (null, libs);
+    });
+};
+
 module.exports = Libs;

@@ -162,6 +162,13 @@ app.post('/l/:name/rating/:rating', function (req, res) {
     });
 });
 
+app.get('/find/:keyword', function (req, res) {
+    Libs.find(req.params.keyword, function (err, libs){
+        if (err) return res.jsonp(500, err);
+        res.jsonp(libs);
+    });
+});
+
 port = process.env.PORT || 5000;
 app.listen(port, function () {
     console.log("Listening on port", port);
