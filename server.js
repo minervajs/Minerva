@@ -188,7 +188,7 @@ app['delete']('/l/:name', mustbeloggedin, function (req, res) {
         } else {
             Libs.del(name, function (err, result) {
                 if (err) return res.jsonp(500, err);
-                res.jsonp(null, result);
+                res.jsonp(result);
             });
         }
 
