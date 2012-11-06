@@ -177,6 +177,21 @@ app.post('/l/:name', mustbeloggedin, function (req, res) {
         });
     });
 });
+
+app['delete']('/l/:name', mustbeloggedin, function (req, res) {
+    //Delete a particular library
+    var name = req.params.name;
+    Libs.get(name, function (err, lib) {
+        if (err) return res.jsonp(500, err);
+        if (lib.maintainer.userId  !== req.user.id) {
+            res.jsonp(403, { error : "unauthorized", reason : "You may only delete your own libraries."});
+        } else {
+            Libs.del(name, function (err, result) {
+                if (err) return res.jsonp(500, err);
+                res.jsonp(null, result);
+            });
+        }
+
     });
 });
 

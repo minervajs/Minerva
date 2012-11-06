@@ -25,6 +25,9 @@
 
     jssllng.factory('Library', function ($resource) {
         var Library = $resource('../l/:name', {"name" : "@name"});
+        Library.prototype.destroy = function(cb) {
+            return Library.remove({name: this.name}, cb);
+        };
         return Library;
     });
 

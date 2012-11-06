@@ -39,6 +39,12 @@ Libs.get = function () {
 Libs.set = function (lib, callback) {
     db.insert(lib, Libs.nameToKey(lib.name), callback);
 };
+
+Libs.del = function (name, callback) {
+    Libs.get(name, function (err, lib) {
+        if (err) return callback(err);
+        lib._deleted = true;
+        Libs.set(lib, callback);
     });
 };
 
