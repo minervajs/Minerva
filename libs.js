@@ -37,7 +37,8 @@ Libs.get = function () {
 };
 
 Libs.set = function (lib, user, callback) {
-    Libs.get(lib.name, function (err, currentLib) {
+    if (!user || !user.id || !user.email) return callback({ error : "unauthorized", reason : "You must be logged in to modify or create a library." });
+    library.get(lib.name, function (err, currentLib) {
         if (err && err.reason === "missing") {
             lib.maintainer = {
                 userId : user.id,
