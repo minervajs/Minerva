@@ -36,30 +36,9 @@ Libs.get = function () {
     }
 };
 
-Libs.set = function (lib, user, callback) {
-    if (!user || !user.id || !user.email) return callback({ error : "unauthorized", reason : "You must be logged in to modify or create a library." });
-    Libs.get(lib.name, function (err, currentLib) {
-        if (err && err.reason === "missing") {
-            lib.maintainer = {
-                userId : user.id,
-                email : user.email
-            };
-            db.insert(lib, Libs.nameToKey(lib.name), function (err, lib){
-                if (err) return callback(err);
-                callback(null, lib);
-            });
-        } else if (err) {
-            return callback(err);
-        } else if (currentLib.maintainer.userId !== user.id) {
-            callback({ error : "unauthorized", reason : "You are not authorized to modify that library." });
-        } else {
-            // TODO current with retrieved lib. Don't allow rating hacks :)
-            lib.maintainer = currentLib.maintainer;
-            db.insert(lib, Libs.nameToKey(lib.name), function (err, lib){
-                if (err) return callback(err);
-                callback(null, lib);
-            });
-        }
+Libs.set = function (lib, callback) {
+    db.insert(lib, Libs.nameToKey(lib.name), callback);
+};
     });
 };
 

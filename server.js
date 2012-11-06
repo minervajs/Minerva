@@ -1,7 +1,7 @@
 'use strict';
 /*jshint globalstrict:true node:true*/
 
-var app, corser, db, everyauth, express, nano, port, Libs, Users;
+var app, corser, db, everyauth, express, mustbeloggedin, nano, port, Libs, Users;
 
 corser = require("corser");
 everyauth = require("everyauth");
@@ -9,6 +9,14 @@ express = require("express");
 Libs = require("./libs");
 nano = require("nano")(process.env.CLOUDANT_URL);
 Users = require("./users");
+
+//---------------------------------------------------------
+// Set up custom middleware
+//---------------------------------------------------------
+mustbeloggedin = function (req, res, next) {
+    if (!req.user) return res.jsonp(403, { error : "unauthorized", reason : "You must be logged in to perform that action."});
+    next();
+};
 
 //---------------------------------------------------------
 // Set up DB connection
@@ -140,18 +148,35 @@ app.get('/l/:name', function (req, res) {
     });
 });
 
-app.post('/l/:name', function (req, res) {
+app.post('/l/:name', mustbeloggedin, function (req, res) {
     //Post (save) a particular library
-    if (!req.user) {
-        res.jsonp(403, { error : "unauthorized", reason : "You must be logged in to save libraries."});
-    }
-    Libs.set(req.body, req.user, function (err, lib){
-        if (err && err.error === "library_ownership") {
-            return res.jsonp(403, err);
+    var name = req.params.name;
+    Libs.get(name, function (err, lib) {
+        if (err && ( err.reason === 'missing' || err.reason === 'deleted')) {
+            //Append maintainer information to the new library
+            req.body.maintainer = {
+                userId : req.user.id,
+                email : req.user.email,
+                name : req.user.name
+            };
+            req.body.ratings = {
+                average : 0,
+                count : 0
+            };
         } else if (err) {
             return res.jsonp(500, err);
+        } else if (lib.maintainer.userId  !== req.user.id) {
+            res.jsonp(403, { error : "unauthorized", reason : "You may only modify your own libraries."});
+        } else {
+            req.body.maintainer = lib.maintainer;
+            req.body.ratings = lib.ratings;
         }
-        res.jsonp(lib);
+        Libs.set(req.body, function (err, savedLib){
+            if (err) return res.jsonp(500, err);
+            res.jsonp(savedLib);
+        });
+    });
+});
     });
 });
 
