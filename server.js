@@ -20,6 +20,7 @@ mustbeloggedin = function (req, res, next) {
 
 senderror = function (res, err) {
     var error = {};
+    console.error("Error:",err);
     error.error = err.error || "unspecified";
     error.reason = err.reason || "Unspecified server error.";
     res.jsonp(500, error);
