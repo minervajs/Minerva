@@ -5,7 +5,7 @@
     
     var jssllng = {};
 
-    jssllng = angular.module('jssllng', ['ngResource']);
+    jssllng = angular.module('jssllng', ['ngResource', 'ngSanitize']);
 
     jssllng.config(function ($routeProvider, $locationProvider) {
         $routeProvider.
@@ -82,11 +82,12 @@
         };
     });
 
-    jssllng.controller('LibraryView', function ($scope, $routeParams, Library) {
+    jssllng.controller('LibraryView', function ($scope, $routeParams, $sanitize, Library) {
         var self = this;
         Library.get({name: $routeParams.name}, function(library) {
             self.original = library;
             $scope.library = new Library(self.original);
+            $scope.description = $scope.library.description;
         });
     });
 

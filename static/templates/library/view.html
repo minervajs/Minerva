@@ -1,12 +1,13 @@
 <h3>{{ library.name }}</h3>
-<p class="lead">{{ library.description}}</p>
+<p class="lead">{{ library.title}}</p>
+<div ng-bind-html="description"></div>
 <table class="table">
     <tbody>
         <tr>
-            <th>Rating</th><td><a href="#!/rate/{{library.name}}"><rating rating="{{library.ratings.average}}"></rating></a></td>
+            <th>Maintainer</th><td><a href="mailto:{{library.maintainer.email}}">{{ library.maintainer.name }}</a></td>
         </tr>
         <tr>
-            <th>Readme</th><td>{{ library.readme }}</td>
+            <th>Rating</th><td><a href="#!/rate/{{library.name}}"><rating rating="{{library.ratings.average}}"></rating></a></td>
         </tr>
         <tr>
             <th>URL</th><td><a href="{{ library.url }}">{{ library.url }}</a></td>

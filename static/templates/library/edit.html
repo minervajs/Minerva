@@ -7,6 +7,12 @@
     <span ng-show="libraryForm.name.$error.required" class="help-inline">
         Required</span>
   </div>
+
+  <div class="control-group">
+    <label>Title</label>
+    <input type="text" name="title" ng-model="library.title" />
+    <span class="help-inline">Expanded form of the name.</span>
+  </div>
  
   <div class="control-group" ng-class="{error: libraryForm.site.$invalid}">
     <label>URL</label>
@@ -16,12 +22,10 @@
     <span ng-show="libraryForm.site.$error.url" class="help-inline">
         Not a URL</span>
   </div>
- 
+
   <label>Description</label>
   <textarea name="description" ng-model="library.description"></textarea>
-
-  <label>Read Me</label>
-  <textarea name="readme" ng-model="library.readme"></textarea>
+  <span class="help-inline">You may use html here.</span>
 
   <label>Keywords/Tags</label>
   <input type="text" name="keywords" ng-model="library.keywords" ng-list>
