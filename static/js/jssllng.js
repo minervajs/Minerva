@@ -32,7 +32,7 @@
     });
 
     jssllng.factory('Rating', function ($resource) {
-        var Rating = $resource('../l/:name/rating/:rating', {"name" : "@name", "rating" : "@rating"});
+        var Rating = $resource('../lib/:name/rating/:rating', {"name" : "@name", "rating" : "@rating"});
         return Rating;
     });
 
