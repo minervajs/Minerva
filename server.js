@@ -21,22 +21,23 @@ mustbeloggedin = function (req, res, next) {
 //---------------------------------------------------------
 // Set up DB connection
 //---------------------------------------------------------
-nano.db.get('jssll', function (err, body) {
+var dbname = process.env.DBNAME || 'jssll';
+nano.db.get(dbname, function (err, body) {
     if (err && err.error === 'not_found') {
         console.log("db not found...creating");
-        nano.db.create('jssll', function (err) {
+        nano.db.create(dbname, function (err) {
             if (err) {
                 console.log("Unable to connect to db. Exiting.");
                 process.exit(1);
             }
             console.log("db created and opened");
-            db = nano.db.use('jssll');
+            db = nano.db.use(dbname);
             Users.use(db);
             Libs.use(db);
         });
     } else {
         console.log("db opened");
-        db = nano.db.use('jssll');
+        db = nano.db.use(dbname);
         Users.use(db);
         Libs.use(db);
     }
