@@ -1,7 +1,7 @@
 'use strict';
 /*jshint globalstrict:true node:true*/
 
-var app, corser, db, everyauth, express, mustbeloggedin, nano, port, Libs, Users;
+var app, corser, db, everyauth, express, mustbeloggedin, nano, port, senderror, Libs, Users;
 
 corser = require("corser");
 everyauth = require("everyauth");
@@ -16,6 +16,13 @@ Users = require("./users");
 mustbeloggedin = function (req, res, next) {
     if (!req.user) return res.jsonp(403, { error : "unauthorized", reason : "You must be logged in to perform that action."});
     next();
+};
+
+senderror = function (res, err) {
+    var error = {};
+    error.error = err.error || "unspecified";
+    error.reason = err.reason || "Unspecified server error.";
+    res.jsonp(500, error);
 };
 
 //---------------------------------------------------------
@@ -136,7 +143,7 @@ app.get('/account', function (req, res) {
 app.get('/lib', function (req, res) {
     //Get list of all libraries
     Libs.get(function (err, libs) {
-        if (err) return res.jsonp(500, err);
+        if (err) return senderror(err);
         res.jsonp(libs);
     });
 });
@@ -144,7 +151,7 @@ app.get('/lib', function (req, res) {
 app.get('/lib/:name', function (req, res) {
     //Get a particular library by name
     Libs.get(req.params.name, function (err, lib) {
-        if (err) return res.jsonp(500, err);
+        if (err) return senderror(err);
         res.jsonp(lib);
     });
 });
@@ -165,7 +172,7 @@ app.post('/lib/:name', mustbeloggedin, function (req, res) {
                 count : 0
             };
         } else if (err) {
-            return res.jsonp(500, err);
+            return senderror(err);
         } else if (lib.maintainer.userId  !== req.user.id) {
             res.jsonp(403, { error : "unauthorized", reason : "You may only modify your own libraries."});
         } else {
@@ -173,7 +180,7 @@ app.post('/lib/:name', mustbeloggedin, function (req, res) {
             req.body.ratings = lib.ratings;
         }
         Libs.set(req.body, function (err, savedLib){
-            if (err) return res.jsonp(500, err);
+            if (err) return senderror(err);
             res.jsonp(savedLib);
         });
     });
@@ -183,12 +190,12 @@ app['delete']('/lib/:name', mustbeloggedin, function (req, res) {
     //Delete a particular library
     var name = req.params.name;
     Libs.get(name, function (err, lib) {
-        if (err) return res.jsonp(500, err);
+        if (err) return senderror(err);
         if (lib.maintainer.userId  !== req.user.id) {
             res.jsonp(403, { error : "unauthorized", reason : "You may only delete your own libraries."});
         } else {
             Libs.del(name, function (err, result) {
-                if (err) return res.jsonp(500, err);
+                if (err) return senderror(err);
                 res.jsonp(result);
             });
         }
@@ -198,14 +205,14 @@ app['delete']('/lib/:name', mustbeloggedin, function (req, res) {
 
 app.post('/lib/:name/rating/:rating', function (req, res) {
     Libs.rate(req.params.name, req.params.rating, function (err, averageRating) {
-        if (err) return res.jsonp(500, err);
+        if (err) return senderror(err);
         res.jsonp(averageRating);
     });
 });
 
 app.get('/find/:keyword', function (req, res) {
     Libs.find(req.params.keyword, function (err, libs){
-        if (err) return res.jsonp(500, err);
+        if (err) return senderror(err);
         res.jsonp(libs);
     });
 });
