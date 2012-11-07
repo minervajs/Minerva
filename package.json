@@ -9,6 +9,9 @@
         "everyauth" : "git://github.com/bnoguchi/everyauth.git#express3",
         "nano" : "3.3.x"
     },
+    "bundleDependencies" : [
+        "express", "corser", "everyauth", "nano"
+    ],
     "readme" : "readme.md",
     "license" : "MIT",
     "engines" : {
