@@ -76,7 +76,7 @@ Libs.rate = function (name, ratingIn, callback) {
 Libs.find = function (keyword, callback) {
     db.view('jssll', 'find', {
         startkey : keyword,
-        endkey : keyword+"\uFFFF"
+        endkey : keyword+"\u9999"
         //include_docs : true
     }, function (err, body) {
         if (err) return callback (err);
