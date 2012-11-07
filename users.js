@@ -29,7 +29,7 @@ Users.get = function (userId, callback) {
 Users.set = function (user, callback) {
     db.insert(user, Users.idToKey(user.id), function (err, body) {
         if (err) return callback(err);
-        callback(null, body);
+        Users.get(body.id.slice(5), callback); //slice off the 'user:'
     });
 };
 
