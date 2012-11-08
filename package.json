@@ -7,10 +7,12 @@
         "express" : "3.x",
         "corser" : "1.1.x",
         "everyauth" : "git://github.com/bnoguchi/everyauth.git#express3",
-        "nano" : "3.3.x"
+        "nano" : "3.3.x",
+        "redis" : "0.7.3",
+        "connect-redis" : "1.4.5"
     },
     "bundleDependencies" : [
-        "express", "corser", "everyauth", "nano"
+        "express", "corser", "everyauth", "nano", "connect-redis"
     ],
     "readme" : "readme.md",
     "license" : "MIT",

@@ -1,13 +1,16 @@
 'use strict';
 /*jshint globalstrict:true node:true*/
 
-var app, corser, db, everyauth, express, mustbeloggedin, nano, port, senderror, Libs, Users;
+var app, corser, db, everyauth, express, mustbeloggedin, nano,
+    connectRedis, port, redis, redisClient, senderror, Libs, Users;
 
 corser = require("corser");
 everyauth = require("everyauth");
 express = require("express");
-Libs = require("./libs");
+connectRedis = require("connect-redis")(express);
 nano = require("nano")(process.env.CLOUDANT_URL);
+redis = require("redis");
+Libs = require("./libs");
 Users = require("./users");
 
 //---------------------------------------------------------
@@ -27,7 +30,7 @@ senderror = function (res, err) {
 };
 
 //---------------------------------------------------------
-// Set up DB connection
+// Set up DB connections
 //---------------------------------------------------------
 var dbname = process.env.DBNAME || 'jssll';
 nano.db.get(dbname, function (err, body) {
@@ -50,6 +53,14 @@ nano.db.get(dbname, function (err, body) {
         Libs.use(db);
     }
 });
+
+if (process.env.REDISTOGO_URL) {
+    var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+    redisClient = require("redis").createClient(rtg.port, rtg.hostname);
+    redisClient.auth(rtg.auth.split(":")[1]);
+} else {
+    redisClient = redis.createClient();
+}
 
 //---------------------------------------------------------
 // Set up EveryAuth for Google's OAuth 2
@@ -108,7 +119,12 @@ app = express();
 app.use(corser.create());
 app.use(express.bodyParser());
 app.use(express.cookieParser(process.env.COOKIE_SECRET));
-app.use(express.session());
+app.use(express.session({
+    store : new connectRedis({
+        client : redisClient
+    }),
+    secret : process.env.COOKIE_SECRET
+}));
 app.use(everyauth.middleware());
 
 app.options("*", function (req, res){
