@@ -3,9 +3,10 @@
   
   <div class="control-group" ng-class="{error: libraryForm.name.$invalid}">
     <label>Name</label>
-    <input type="text" name="name" ng-model="library.name" required>
+    <input type="text" name="name" ng-model="library.name" required ng-disabled="library._rev">
     <span ng-show="libraryForm.name.$error.required" class="help-inline">
         Required</span>
+    <span ng-show="library._rev" class="help-inline">Library names are immutable.</span>
   </div>
 
   <div class="control-group">
