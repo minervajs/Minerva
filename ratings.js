@@ -21,15 +21,32 @@ Ratings.set = function (rating, callback) {
     if (!rating || !rating.lib || !rating.userId || !rating.rating) {
         return callback({ error: "invalid", reason : "malformed rating object"});
     }
-    db.insert(rating, Ratings.makeKey(rating.lib, rating.userId), callback);
+    db.insert(rating, Ratings.makeKey(rating.lib, rating.userId), function (err) {
+        if (err) return callback(err);
+        Ratings.updateLib(rating.lib, callback);
+    });
 };
 
 Ratings.get = function (lib, userId, callback) {
     db.get(Ratings.makeKey(lib, userId), callback);
 };
 
-Ratings.getAll = function (libName) {
+Ratings.getAverage = function (lib, callback) {
+    db.view('jssll', 'rating', {
+        reduce : true,
+        key : lib
+    }, function (err, response) {
+        if (err) return callback(err);
+        var stats = response.rows[0].value;
+        callback(null, stats.sum / stats.count);
+    });
+};
 
+Ratings.updateLib = function (lib, callback) {
+    Ratings.getAverage(lib, function (err, average) {
+        if (err) return callback(err);
+        Libs.update(lib, {ratings : { average : average}}, callback);
+    });
 };
 
 module.exports = Ratings;
