@@ -162,31 +162,10 @@
         return disqusCommentsDirective;
     });
 
-    jssllng.directive('googleanalytics', function ($location, $window) {
-        return {
-            retrict : "E",
-            template : "<p>Google Analytics</p>",
-            link : function (scope, elements, attributes) {
-                $window._gaq = $window._gaq || [];
-                $window._gaq.push(['_setAccount', 'UA-36283062-1']);
-                $window._gaq.push(['_trackPageview']);
-
-                console.log($location.protocol);
-
-                (function() {
-                    $window.ga = document.createElement('script');
-                    $window.ga.type = 'text/javascript';
-                    $window.ga.async = true;
-                    $window.ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                    $window.s = document.getElementsByTagName('script')[0];
-                    $window.s.parentNode.insertBefore($window.ga, $window.s);
-                })();
-
-                scope.$watch( function () { return $location.path; }, function (path) {
-                    $window._gaq.push(['_trackPageview', $location.path]);
-                });
-            }
-        };
+    jssllng.controller('analytics', function ($scope, $location, $window) {
+        $scope.$watch( function () { return $location.path(); }, function (path) {
+            $window._gaq.push(['_trackPageview', $location.path()]);
+        });
     });
 
     console.log("jssllng loaded");
