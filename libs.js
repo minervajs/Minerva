@@ -73,6 +73,18 @@ Libs.rate = function (name, ratingIn, callback) {
     }
 };
 
+Libs.update = function (name, params, callback) {
+    Libs.get(name, function (err, lib) {
+        if (err) return callback(err);
+        var mergedLib = lib, param;
+        for (param in params) {
+            if (!params.hasOwnProperty(param)) continue;
+            mergedLib[param] = params[param];
+        }
+        Libs.set(mergedLib, callback);
+    });
+};
+
 Libs.find = function (keyword, callback) {
     db.view('jssll', 'find', {
         startkey : keyword,
