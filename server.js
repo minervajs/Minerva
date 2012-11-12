@@ -163,7 +163,7 @@ app.get('/account', function (req, res) {
 app.get('/lib', function (req, res) {
     //Get list of all libraries
     Libs.get(function (err, libs) {
-        if (err) return senderror(err);
+        if (err) return senderror(res, err);
         res.jsonp(libs);
     });
 });
@@ -171,7 +171,7 @@ app.get('/lib', function (req, res) {
 app.get('/lib/:name', function (req, res) {
     //Get a particular library by name
     Libs.get(req.params.name, function (err, lib) {
-        if (err) return senderror(err);
+        if (err) return senderror(res, err);
         res.jsonp(lib);
     });
 });
@@ -192,7 +192,7 @@ app.post('/lib/:name', mustbeloggedin, function (req, res) {
                 count : 0
             };
         } else if (err) {
-            return senderror(err);
+            return senderror(res, err);
         } else if (lib.maintainer.userId  !== req.user.id) {
             res.jsonp(403, { error : "unauthorized", reason : "You may only modify your own libraries."});
         } else {
@@ -200,7 +200,7 @@ app.post('/lib/:name', mustbeloggedin, function (req, res) {
             req.body.ratings = lib.ratings;
         }
         Libs.set(req.body, function (err, savedLib){
-            if (err) return senderror(err);
+            if (err) return senderror(res, err);
             res.jsonp(savedLib);
         });
     });
@@ -210,12 +210,12 @@ app['delete']('/lib/:name', mustbeloggedin, function (req, res) {
     //Delete a particular library
     var name = req.params.name;
     Libs.get(name, function (err, lib) {
-        if (err) return senderror(err);
+        if (err) return senderror(res, err);
         if (lib.maintainer.userId  !== req.user.id) {
             res.jsonp(403, { error : "unauthorized", reason : "You may only delete your own libraries."});
         } else {
             Libs.del(name, function (err, result) {
-                if (err) return senderror(err);
+                if (err) return senderror(res, err);
                 res.jsonp(result);
             });
         }
@@ -229,18 +229,20 @@ app.post('/lib/:name/rating/:rating', mustbeloggedin, function (req, res) {
     name = req.params.name;
     rating = parseInt(req.params.rating, 10);
     Ratings.get(req.params.name, req.user.id, function (err, ratingObj) {
-        if (err && err.reason !== "missing") return senderror(err);
+        if (err && err.reason !== "missing") {
+            return senderror(res, err);
+        }
         if (err) { // missing rating, create
             ratingObj = {
                 userId : userId,
-                name : name,
+                lib : name,
                 rating : rating
             };
         } else {
             ratingObj.rating = rating;
         }
         Ratings.set(ratingObj, function (err, resp) {
-            if (err) senderror(err);
+            if (err) return senderror(res, err);
             else res.jsonp(resp);
         });
     });
@@ -248,7 +250,7 @@ app.post('/lib/:name/rating/:rating', mustbeloggedin, function (req, res) {
 
 app.get('/find/:keyword', function (req, res) {
     Libs.find(req.params.keyword, function (err, libs){
-        if (err) return senderror(err);
+        if (err) return senderror(res, err);
         res.jsonp(libs);
     });
 });
