@@ -83,13 +83,9 @@
         };
     });
 
-    jssllng.controller('LibraryView', function ($scope, $routeParams, $sanitize, Library) {
-        var self = this;
-        Library.get({name: $routeParams.name}, function(library) {
-            self.original = library;
-            $scope.library = new Library(self.original);
-            $scope.description = $scope.library.description;
-        });
+    jssllng.controller('LibraryView', function ($scope, $routeParams, $sanitize, Library, Account) {
+        $scope.user = Account.get();
+        $scope.library = Library.get({name: $routeParams.name});
     });
 
     jssllng.controller('LibraryCreate', function ($scope, $location, Library) {
