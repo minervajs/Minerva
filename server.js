@@ -1,14 +1,15 @@
 'use strict';
 /*jshint globalstrict:true node:true*/
 
-var app, corser, db, everyauth, express, mustbeloggedin, nano, port, senderror, Libs, Users;
+var app, corser, db, everyauth, express, mustbeloggedin, nano, port, senderror, Libs, Users, Ratings;
 
 corser = require("corser");
 everyauth = require("everyauth");
 express = require("express");
-Libs = require("./libs");
 nano = require("nano")(process.env.CLOUDANT_URL);
+Libs = require("./libs");
 Users = require("./users");
+Ratings = require("./ratings");
 
 //---------------------------------------------------------
 // Set up custom middleware
@@ -42,12 +43,14 @@ nano.db.get(dbname, function (err, body) {
             db = nano.db.use(dbname);
             Users.use(db);
             Libs.use(db);
+            Ratings.use(db);
         });
     } else {
         console.log("db opened");
         db = nano.db.use(dbname);
         Users.use(db);
         Libs.use(db);
+        Ratings.use(db);
     }
 });
 
@@ -204,10 +207,26 @@ app['delete']('/lib/:name', mustbeloggedin, function (req, res) {
     });
 });
 
-app.post('/lib/:name/rating/:rating', function (req, res) {
-    Libs.rate(req.params.name, req.params.rating, function (err, averageRating) {
-        if (err) return senderror(err);
-        res.jsonp(averageRating);
+app.post('/lib/:name/rating/:rating', mustbeloggedin, function (req, res) {
+    var name, userId, rating;
+    userId = req.user.id;
+    name = req.params.name;
+    rating = parseInt(req.params.rating, 10);
+    Ratings.get(req.params.name, req.user.id, function (err, ratingObj) {
+        if (err && err.reason !== "missing") return senderror(err);
+        if (err) { // missing rating, create
+            ratingObj = {
+                userId : userId,
+                name : name,
+                rating : rating
+            };
+        } else {
+            ratingObj.rating = rating;
+        }
+        Ratings.set(ratingObj, function (err, resp) {
+            if (err) senderror(err);
+            else res.jsonp(resp);
+        });
     });
 });
 
