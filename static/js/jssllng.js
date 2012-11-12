@@ -52,8 +52,9 @@
         };
     });
 
-    jssllng.controller('LibraryList', function ($scope, Library) {
+    jssllng.controller('LibraryList', function ($scope, Library, Account) {
         $scope.libraries = Library.query();
+        $scope.user = Account.get();
         $scope.message = "Hello";
     });
 
