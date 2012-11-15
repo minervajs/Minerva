@@ -1,3 +1,3 @@
-# JS Stat Lib M
+# MinervaJS
 
-Backend service for managing JavaScript statistics libraries.
+[MinervaJS](http://minervajs.org) is a tool for publishing and finding Javascript Libraries, and weaving them together.
