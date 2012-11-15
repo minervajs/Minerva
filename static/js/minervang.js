@@ -3,11 +3,11 @@
     /*jshint browser:true jquery:true*/
     /*global console:false angular:false DISQUS:false*/
     
-    var jssllng = {};
+    var minervang = {};
 
-    jssllng = angular.module('jssllng', ['ngResource', 'ngSanitize']);
+    minervang = angular.module('minervang', ['ngResource', 'ngSanitize']);
 
-    jssllng.config(function ($routeProvider, $locationProvider) {
+    minervang.config(function ($routeProvider, $locationProvider) {
         $routeProvider.
                 when('/', {controller:'LibraryList', templateUrl:'templates/library/list.html'}).
                 when('/edit/:name', {controller:'LibraryEdit', templateUrl:'templates/library/edit.html'}).
@@ -18,12 +18,12 @@
         $locationProvider.hashPrefix("!");
     });
 
-    jssllng.factory('Account', function ($resource) {
+    minervang.factory('Account', function ($resource) {
         var Account = $resource('../account');
         return Account;
     });
 
-    jssllng.factory('Library', function ($resource) {
+    minervang.factory('Library', function ($resource) {
         var Library = $resource('../lib/:name', {"name" : "@name"});
         Library.prototype.destroy = function(cb) {
             return Library.remove({name: this.name}, cb);
@@ -31,12 +31,12 @@
         return Library;
     });
 
-    jssllng.factory('Rating', function ($resource) {
+    minervang.factory('Rating', function ($resource) {
         var Rating = $resource('../lib/:name/rating/:rating', {"name" : "@name", "rating" : "@rating"});
         return Rating;
     });
 
-    jssllng.controller('account', function ($scope, $http, Account){
+    minervang.controller('account', function ($scope, $http, Account){
         /*global Account:false*/
         $scope.accountTemplate = 'templates/account/loggedOut.html';
         var user = Account.get(function () {
@@ -52,13 +52,13 @@
         };
     });
 
-    jssllng.controller('LibraryList', function ($scope, Library, Account) {
+    minervang.controller('LibraryList', function ($scope, Library, Account) {
         $scope.libraries = Library.query();
         $scope.user = Account.get();
         $scope.message = "Hello";
     });
 
-    jssllng.controller('LibraryEdit', function ($scope, $location, $routeParams, Library) {
+    minervang.controller('LibraryEdit', function ($scope, $location, $routeParams, Library) {
         var self = this;
  
         Library.get({name: $routeParams.name}, function(library) {
@@ -83,12 +83,12 @@
         };
     });
 
-    jssllng.controller('LibraryView', function ($scope, $routeParams, $sanitize, Library, Account) {
+    minervang.controller('LibraryView', function ($scope, $routeParams, $sanitize, Library, Account) {
         $scope.user = Account.get();
         $scope.library = Library.get({name: $routeParams.name});
     });
 
-    jssllng.controller('LibraryCreate', function ($scope, $location, Library) {
+    minervang.controller('LibraryCreate', function ($scope, $location, Library) {
         $scope.save = function () {
             Library.save($scope.library, function(library) {
               $location.path('/');
@@ -96,7 +96,7 @@
         };
     });
 
-    jssllng.controller('LibraryRate', function ($scope, $routeParams, $location, Library, Rating) {
+    minervang.controller('LibraryRate', function ($scope, $routeParams, $location, Library, Rating) {
         var self = this;
         Library.get({name: $routeParams.name}, function(library) {
             self.original = library;
@@ -112,7 +112,7 @@
         };
     });
 
-    jssllng.directive('rating', function () {
+    minervang.directive('rating', function () {
         var ratingDirective = {
             template : "<div style=\"white-space:nowrap\"><i class=\"icon-star-empty\"></i><i class=\"icon-star-empty\"></i><i class=\"icon-star-empty\"></i><i class=\"icon-star-empty\"></i><i class=\"icon-star-empty\"></i></div>",
             link : function (scope, element, attributes) {
@@ -125,7 +125,7 @@
         return ratingDirective;
     });
 
-    jssllng.directive('disquscomments', function ($location, $window) {
+    minervang.directive('disquscomments', function ($location, $window) {
         var disqusCommentsDirective;
         disqusCommentsDirective = {
             restrict : "E",
@@ -134,7 +134,7 @@
                 scope.$watch( function () { return $location.path(); }, function (path) {
                     var disqus_url, disqus_identifier;
                     disqus_identifier = path;//$location.path();
-                    disqus_url = 'http://jssll.org'+disqus_identifier;
+                    disqus_url = 'http://minerva.org'+disqus_identifier;
                     if ($window.DISQUS) {
                         $window.DISQUS.reset({
                             reload : true,
@@ -162,12 +162,12 @@
         return disqusCommentsDirective;
     });
 
-    jssllng.controller('analytics', function ($scope, $location, $window) {
+    minervang.controller('analytics', function ($scope, $location, $window) {
         $scope.$watch( function () { return $location.path(); }, function (path) {
             $window._gaq.push(['_trackPageview', $location.path()]);
         });
     });
 
-    console.log("jssllng loaded");
-    window.jssllng = jssllng;
+    console.log("minervang loaded");
+    window.minervang = minervang;
 })();

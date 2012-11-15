@@ -86,7 +86,7 @@ Libs.update = function (name, params, callback) {
 };
 
 Libs.find = function (keyword, callback) {
-    db.view('jssll', 'find', {
+    db.view('minerva', 'find', {
         startkey : keyword,
         endkey : keyword+"\u9999"
         //include_docs : true

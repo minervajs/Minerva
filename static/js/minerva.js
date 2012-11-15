@@ -3,13 +3,13 @@
     /*jshint browser:true*/
     /*global console:true*/
 
-    console.log("jssll loaded");
+    console.log("minerva loaded");
 
-    var jssll = {}, _oldjssll, rootURL;
+    var minerva = {}, _oldminerva, rootURL;
 
-    rootURL = 'http://jssll.herokuapp.com';
+    rootURL = 'http://minervajs.org';
 
-    jssll.print = function (err, resp) {
+    minerva.print = function (err, resp) {
         if (err) {
             console.error(err);
         }
@@ -18,12 +18,12 @@
         }
     };
 
-    jssll.safeMode = function () {
-        window.jssll = _oldjssll;
-        return jssll;
+    minerva.safeMode = function () {
+        window.minerva = _oldminerva;
+        return minerva;
     };
 
-    jssll.getJSON = function (url, callback) {
+    minerva.getJSON = function (url, callback) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', url);
         //xhr.setRequestHeader('Content-Type', 'application/json');
@@ -37,7 +37,7 @@
         xhr.send(null);
     };
 
-    jssll.loadScript = function (url, callback) {
+    minerva.loadScript = function (url, callback) {
         if (typeof callback !== 'function') {
             callback = function () {
                 console.log("thingy loaded", url);
@@ -61,27 +61,27 @@
         head.appendChild(script);
     };
 
-    jssll.find = function (term, callback) {
-        jssll.getJSON(rootURL+'/find/'+term, callback);
+    minerva.find = function (term, callback) {
+        minerva.getJSON(rootURL+'/find/'+term, callback);
     };
 
-    jssll.info = function (name, callback) {
-        jssll.getJSON(rootURL+'/lib/'+name, callback);
+    minerva.info = function (name, callback) {
+        minerva.getJSON(rootURL+'/lib/'+name, callback);
     };
 
-    jssll.load = function (name, callback) {
-        jssll.info(name, function (err, lib){
+    minerva.load = function (name, callback) {
+        minerva.info(name, function (err, lib){
             if (err) return console.error(err);
-            jssll.loadScript(lib.url, callback);
+            minerva.loadScript(lib.url, callback);
         });
     };
 
-    jssll.rootURL = function (url) {
+    minerva.rootURL = function (url) {
         if (!url) return rootURL;
         rootURL = url;
-        return jssll;
+        return minerva;
     };
 
-    _oldjssll = window.jssll || null;
-    window.jssll = jssll;
+    _oldminerva = window.minerva || null;
+    window.minerva = minerva;
 })(window);

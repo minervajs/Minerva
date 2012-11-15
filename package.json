@@ -1,7 +1,7 @@
 {
-    "name" : "jssll",
-    "description" : "JavaScript Stat Library Library Server",
-    "version" : "0.0.1",
+    "name" : "minerva",
+    "description" : "Minerva is a web service for publishing and weaving javascript libraries.",
+    "version" : "0.2.0",
     "private" : true,
     "dependencies" : {
         "express" : "3.x",

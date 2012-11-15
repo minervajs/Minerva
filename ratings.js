@@ -32,7 +32,7 @@ Ratings.get = function (lib, userId, callback) {
 };
 
 Ratings.getAverage = function (lib, callback) {
-    db.view('jssll', 'rating', {
+    db.view('minerva', 'rating', {
         reduce : true,
         key : lib
     }, function (err, response) {

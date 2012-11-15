@@ -4,7 +4,7 @@
 var app, couchapp;
 
 app = {
-    _id : "_design/jssll",
+    _id : "_design/minerva",
     views : {
         find : {
             map : function (doc) {

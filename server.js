@@ -33,7 +33,7 @@ senderror = function (res, err) {
 //---------------------------------------------------------
 // Set up DB connections
 //---------------------------------------------------------
-var dbname = process.env.DBNAME || 'jssll';
+var dbname = process.env.DBNAME || 'minerva';
 nano.db.get(dbname, function (err, body) {
     if (err && err.error === 'not_found') {
         console.log("db not found...creating");
@@ -148,7 +148,7 @@ app.get(/^\/site\/(.*)$/, function (req, res) {
 
 app.get('/api', function (req, res) {
     //Send the api for use in the javascript console
-    res.sendfile('./static/js/jssll.js');
+    res.sendfile('./static/js/minerva.js');
 });
 
 app.get('/account', function (req, res) {
