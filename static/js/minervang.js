@@ -145,7 +145,7 @@
                         });
                     } else {
                         /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-                        $window.disqus_shortname = 'jsstatlibdev'; // required: replace example with your forum shortname
+                        $window.disqus_shortname = 'minervajs'; // required: replace example with your forum shortname
                         $window.disqus_url = disqus_url;
                         $window.disqus_identifier = disqus_identifier;
 
