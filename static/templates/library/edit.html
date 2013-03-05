@@ -18,11 +18,16 @@
   <div class="control-group" ng-class="{error: libraryForm.site.$invalid}">
     <label>URL</label>
     <input type="url" name="site" ng-model="library.url" required>
+    <span class="help-inline">URL of the library script.</span>
     <span ng-show="libraryForm.site.$error.required" class="help-inline">
         Required</span>
     <span ng-show="libraryForm.site.$error.url" class="help-inline">
         Not a URL</span>
   </div>
+
+  <label>Homepage</label>
+  <input type="text" name="homepage" ng-model="library.homepage" ng-list>
+  <span class="help-inline">Homepage of the library.</span>
 
   <label>Description</label>
   <textarea name="description" ng-model="library.description"></textarea>
