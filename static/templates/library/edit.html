@@ -36,7 +36,18 @@
   <label>Keywords/Tags</label>
   <input type="text" name="keywords" ng-model="library.keywords" ng-list>
   <span class="help-inline">e.g. data types, functions, etc.</span>
- 
+
+  <label class="checkbox">
+    <input type="checkbox" ng-model="library.wapp"> Is this a wApp?
+  </label>
+  
+  <fieldset ng-show="library.wapp">
+    <legend class="muted">wApp Settings</legend>
+    <label>BuildUI</label>
+    <textarea name="buildui" ng-model="library.buildui"></textarea>
+    <span class="help-inline">Body of the wApp BuildUI function.</span>
+  </fieldset>
+
   <br>
   <a href="#!/" class="btn">Cancel</a>
   <button ng-click="save()" ng-disabled="isClean() || libraryForm.$invalid"
