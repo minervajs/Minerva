@@ -35,16 +35,21 @@ app = {
     lists : {
         manifests : function (doc, req) {
             /*globals registerType:true, provides:true*/
-            var row, manifest;
+            var row, manifest, first = true;
             send("wApps.manifest.apps.push(\n");
             while ((row = getRow()) !== null) {
+                if (!first) {
+                    send(",\n");
+                } else {
+                    first = false;
+                }
                 send(" {\n");
                 send("  name : '"+row.value.title+"',\n");
                 send("  description : '"+row.value.description+"',\n");
                 send("  url : '"+row.value.homepage+"',\n");
                 send("  author : '"+row.value.maintainer.name+"',\n");
                 send("  buildUI : function(id){ this.require('"+row.value.url+"', function () {"+row.value.buildui+"});}\n");
-                send(" },\n");
+                send(" }");
             }
             send(");\n");
         }
