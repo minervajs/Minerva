@@ -1,8 +1,8 @@
 'use strict';
-/*jshint globalstrict:true node:true*/
+/*jshint globalstrict:true, node:true*/
 
 var app, connectRedis, corser, db, everyauth, express, mustbeloggedin, nano, port,
-    redis, redisClient, senderror, Libs, Users, Ratings;
+    redis, request, redisClient, senderror, Libs, Users, Ratings;
 
 corser = require("corser");
 everyauth = require("everyauth");
@@ -10,6 +10,7 @@ express = require("express");
 nano = require("nano")(process.env.CLOUDANT_URL);
 connectRedis = require("connect-redis")(express);
 redis = require("redis");
+request = require("request");
 Libs = require("./libs");
 Users = require("./users");
 Ratings = require("./ratings");
@@ -158,6 +159,10 @@ app.get('/account', function (req, res) {
     } else {
         res.jsonp({});
     }
+});
+
+app.get('/manifests', function (req, res) {
+    request.get(process.env.CLOUDANT_URL+"/"+dbname+"/_design/minerva/_list/manifests/wapps").pipe(res);
 });
 
 app.get('/lib', function (req, res) {
