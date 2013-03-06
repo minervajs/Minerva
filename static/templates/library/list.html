@@ -1,5 +1,6 @@
 <input type="text" ng-model="search" class="pull-right search-query" placeholder="search by name or keyword">
 <h4>Libraries</h4>
+<p>Apps marked with a <i class="icon-globe"></i> are <a href="http://wapps.github.com">wApp</a> enabled.</p>
 <table class="table">
   <thead>
   <tr>
@@ -11,7 +12,10 @@
   </thead>
   <tbody>
   <tr ng-repeat="library in libraries | filter:search | orderBy:'name'">
-    <td><a href="#!/view/{{library.name}}">{{library.name}}</a></td>
+    <td>
+      <a href="#!/view/{{library.name}}">{{library.name}}</a> 
+      <i class="icon-globe" ng-show="library.wapp"></i>
+    </td>
     <td>
       <a href="#!/rate/{{library.name}}"><rating rating="{{library.ratings.average}}"></rating></a>
     </td>

@@ -13,10 +13,19 @@
             <th>Rating</th><td><a href="#!/rate/{{library.name}}"><rating rating="{{library.ratings.average}}"></rating></a></td>
         </tr>
         <tr>
+            <th>Homepage</th><td><a href="{{ library.homepage }}">{{ library.homepage }}</a></td>
+        </tr>
+        <tr>
             <th>URL</th><td><a href="{{ library.url }}">{{ library.url }}</a></td>
         </tr>
         <tr>
             <th>Keywords</th><td>{{ library.keywords.join(", ") }}</td>
+        </tr>
+        <tr>
+            <th>A wApp? <i class="icon-globe"></i></th><td>{{ library.wapp }}</td>
+        </tr>
+        <tr ng-show="library.wapp">
+            <th>Build UI Function</th><td>{{ library.buildui }}</td>
         </tr>
     </tbody>
 </table>
