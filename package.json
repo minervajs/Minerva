@@ -1,26 +1,32 @@
 {
-    "name" : "minerva",
-    "description" : "Minerva is a web service for publishing and weaving javascript libraries.",
-    "version" : "0.2.0",
-    "private" : true,
-    "dependencies" : {
-        "express" : "3.x",
-        "corser" : "1.1.x",
-        "everyauth" : "git://github.com/bnoguchi/everyauth.git#express3",
-        "nano" : "3.3.x",
-        "redis" : "0.7.3",
-        "connect-redis" : "1.4.5"
-    },
-    "bundleDependencies" : [
-        "express", "corser", "everyauth", "nano", "connect-redis"
-    ],
-    "readme" : "readme.md",
-    "license" : "MIT",
-    "engines" : {
-        "node" : ">=0.8",
-        "npm" : "1.1.x"
-    },
-    "scripts" : {
-        "start" : "foreman start"
-    }
+  "name": "minerva",
+  "description": "Minerva is a web service for publishing and weaving javascript libraries.",
+  "version": "0.2.0",
+  "private": true,
+  "dependencies": {
+    "express": "3.x",
+    "corser": "1.1.x",
+    "everyauth": "git://github.com/bnoguchi/everyauth.git#express3",
+    "nano": "3.3.x",
+    "redis": "0.7.3",
+    "connect-redis": "1.4.5",
+    "request": "~2.14.0"
+  },
+  "bundleDependencies": [
+    "express",
+    "corser",
+    "everyauth",
+    "nano",
+    "connect-redis",
+    "request"
+  ],
+  "readme": "readme.md",
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.8",
+    "npm": "1.1.x"
+  },
+  "scripts": {
+    "start": "foreman start"
+  }
 }
